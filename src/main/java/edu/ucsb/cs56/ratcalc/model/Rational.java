@@ -1,11 +1,10 @@
-package edu.ucsb.cs56.ratcalc.model;
-
 /**
  * A class to represent a rational number with a numerator and denominator
  *
  * @author P. Conrad for CS56 F16
  *
  */
+package edu.ucsb.cs56.ratcalc.model;
 
 public class Rational {
 
@@ -44,6 +43,10 @@ public class Rational {
             this.num /= gcd;
             this.denom /= gcd;
         }
+	if (this.denom <0){
+		this.denom*=-1;
+		this.num*=-1;
+	}
     }
 
     public String toString() {
@@ -67,18 +70,50 @@ public class Rational {
     public static Rational product(Rational a, Rational b) {
         return new Rational(a.num * b.num, a.denom * b.denom);
     }
-
-    public static Rational sum(Rational a, Rational b) {
-        return new Rational(); // stub
+    
+    public static int lcm (int a, int b){
+	    if (a==0|| b==0){
+		    return 0;
+	    }
+	    return (Math.abs(a)*Math.abs(b))/Math.abs(Rational.gcd(a,b));
+    }
+    public Rational plus(Rational r){
+	    int l=lcm(this.denom,r.denom);
+	    return new Rational ((l/this.denom*this.num)+(l/r.denom*r.num),l);
+    }
+    public static Rational sum (Rational a, Rational b){
+	    int l=lcm(a.denom, b.denom);
+	    return new Rational((l/a.denom*a.num)+(l/b.denom*b.num),l);
     }
 
-    public static Rational difference(Rational a, Rational b) {
-        return new Rational(); // stub
+    public Rational minus (Rational r){
+	    Rational s=new Rational (-1,1);
+	    Rational t=this.plus(r.times(s));
+	    return t;
     }
 
-    public static Rational quotient(Rational a, Rational b) {
-        return new Rational(); // stub
-    }
+     public static Rational difference (Rational a, Rational b){
+	Rational s=new Rational (-1,1);
+	Rational t=sum(a,b.times(s));
+	return t;
+     }
+
+     public Rational reciprocalOf(){
+	     if (num==0){
+		     throw new ArithmeticException("numerator cannot be zero");}
+	     return new Rational (this.denom, this.num);
+     }
+
+     public Rational dividedBy(Rational r){
+	     Rational s=this.times(r.reciprocalOf());
+	     return s;
+     }
+
+     public static Rational quotient (Rational a, Rational b){
+	     Rational r= a.times(b.reciprocalOf());
+	     return r;
+     }
+
     /**
      * For testing getters.
      *
@@ -92,3 +127,4 @@ public class Rational {
     }
 
 }
+
